@@ -1,0 +1,62 @@
+snapshots:
+  - name: zip_to_terr_snapshot
+    relation: ref('stg_zip_to_terr') 
+    config:
+      schema: snapshots
+      unique_key: zip_code
+      strategy: timestamp
+      updated_at: source_updated_at
+      invalidate_hard_deletes: true
+
+  - name: terr_hier_snapshot
+    relation: ref('stg_terr_algn') 
+    config:
+      schema: snapshots
+      unique_key: territory_id
+      strategy: timestamp
+      updated_at: source_updated_at
+      invalidate_hard_deletes: true
+
+  - name: field_force_snapshot
+    relation: ref('stg_field_force_details') 
+    config:
+      schema: snapshots
+      unique_key: rep_id
+      strategy: timestamp
+      updated_at: source_updated_at
+      invalidate_hard_deletes: true
+  
+  - name: address_snapshot
+    relation: ref('stg_address_master') 
+    config:
+      schema: snapshots
+      unique_key: address_id
+      strategy: timestamp
+      updated_at: source_updated_at
+      invalidate_hard_deletes: true
+  
+  - name: hco_snapshot
+    relation: ref('stg_hco_onekey') 
+    config:
+      schema: snapshots
+      unique_key: onekey_hco_id
+      strategy: timestamp
+      updated_at: source_updated_at
+      invalidate_hard_deletes: true
+
+  - name: hcp_snapshot
+    relation: ref('stg_hcp_onekey') 
+    config:
+      schema: snapshots
+      unique_key: onekey_hcp_id
+      strategy: timestamp
+      updated_at: source_updated_at
+      invalidate_hard_deletes: true
+
+  
+    
+  
+
+  
+
+  

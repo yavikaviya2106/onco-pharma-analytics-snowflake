@@ -1,0 +1,82 @@
+version: 2
+
+sources:
+  - name: product_mdm
+    database: ONCO_PHARMA_DATA
+    schema: PRODUCT_MDM
+    tables:
+      - name: brand_details
+      - name: disease_details
+      - name: drug_indication_details
+      - name: generic_details
+      - name: market_details
+      - name: product_details
+      - name: sku_details
+
+  - name: internal_mdm
+    database: ONCO_PHARMA_DATA
+    schema: INTERNAL_MDM
+    tables:
+      - name: hcp_call_plan
+      - name: hcp_target_list
+      - name: field_force_details
+      - name: field_force_terr_assignment
+
+  - name: veeva_align
+    database: ONCO_PHARMA_DATA
+    schema: VEEVA_ALIGN
+    tables:
+      - name: terr_algn
+      - name: zip_to_terr
+  
+  - name: iqvia_onekey
+    database: ONCO_PHARMA_DATA
+    schema: IQVIA_ONEKEY
+    tables:
+      - name: address_master
+      - name: hco_onekey
+      - name: hcp_onekey
+      - name: hcp_hco_affiliation
+
+  - name: veeva_crm
+    database: ONCO_PHARMA_DATA
+    schema: VEEVA_CRM
+    tables:
+      - name: call_activity
+      - name: call_detail
+      - name: email_activity
+      - name: key_msg_master
+      - name: med_eve_master
+      - name: med_eve_attendees
+      - name: samples_disbursed
+
+  - name: hub
+    database: ONCO_PHARMA_DATA
+    schema: HUB
+    tables:
+      - name: hub_transactions
+
+  - name: sp
+    database: ONCO_PHARMA_DATA
+    schema: SP
+    tables:
+      - name: sp_transactions
+  
+  - name: iqvia
+    database: ONCO_PHARMA_DATA
+    schema: IQVIA
+    tables:
+      - name: iqvia_ddd
+      - name: iqvia_xponent
+
+  
+
+  
+
+  
+
+  
+
+  
+      
+  

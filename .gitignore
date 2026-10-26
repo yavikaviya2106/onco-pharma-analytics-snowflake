@@ -5,6 +5,30 @@ build/
 dist/
 wheels/
 *.egg-info
+.pytest_cache/
 
 # Virtual environments
 .venv
+venv/
+
+
+
+# Environment variables
+.env
+.env.*
+
+# Logs
+airflow/logs/
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# dbt generated files in the project
+**/target/
+**/dbt_packages/
+
+
+#!source_data/.gitkeep

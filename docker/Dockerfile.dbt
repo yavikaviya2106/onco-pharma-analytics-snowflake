@@ -1,0 +1,18 @@
+FROM python:3.12-slim
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir "dbt-snowflake"
+
+WORKDIR /app/dbt
+
+COPY data_transformation/onco_pharma_analytics_dbt/ /app/dbt/
+
+ENV DBT_PROJECT_DIR=/app/dbt
+ENV DBT_PROFILES_DIR=/app/dbt
+
+ENTRYPOINT ["dbt"]
+
+COPY --chown=airflow:root utils /opt/airflow/utils

@@ -1,0 +1,118 @@
+EXECUTE IMMEDIATE $$
+DECLARE
+    sql_stmt STRING;
+    rs RESULTSET;
+BEGIN
+    SELECT LISTAGG(
+        'SELECT ' ||
+        '''' || c.TABLE_NAME || ''' AS table_name, ' ||
+        '''' || c.COLUMN_NAME || ''' AS column_name, ' ||
+        '''' || c.DATA_TYPE || ''' AS data_type, ' ||
+        '''' ||
+            CASE
+                WHEN REGEXP_LIKE(c.COLUMN_NAME, '(.*_)?(ID|KEY|SK|BK)$', 'i')
+                    THEN 'KEY COLUMN'
+                WHEN c.DATA_TYPE = 'BOOLEAN'
+                  OR REGEXP_LIKE(c.COLUMN_NAME, '^(IS|HAS)_.*|.*_(FLAG|FLG|IND)$', 'i')
+                    THEN 'FLAG COLUMN'
+                WHEN c.DATA_TYPE IN ('DATE', 'TIMESTAMP_NTZ', 'TIMESTAMP_LTZ', 'TIMESTAMP_TZ')
+                    THEN 'DATE COLUMN'
+                WHEN c.DATA_TYPE IN ('NUMBER', 'FLOAT', 'REAL', 'DECIMAL')
+                    THEN 'MEASURE'
+                ELSE 'ATTRIBUTE'
+            END
+        || ''' AS column_type, ' ||
+        'COUNT(*) AS total_rows, ' ||
+        'COUNT_IF("' || c.COLUMN_NAME || '" IS NULL) AS null_count, ' ||
+        'ROUND(100 * COUNT_IF("' || c.COLUMN_NAME || '" IS NULL) / NULLIF(COUNT(*), 0), 2) AS null_pct ' ||
+        'FROM ONCO_PHARMA_ANALYTICS.DEV."' || c.TABLE_NAME || '"',
+        ' UNION ALL '
+    ) WITHIN GROUP (ORDER BY c.TABLE_NAME, c.ORDINAL_POSITION)
+    INTO :sql_stmt
+    FROM ONCO_PHARMA_ANALYTICS.INFORMATION_SCHEMA.COLUMNS c
+    WHERE c.TABLE_SCHEMA = 'DEV'
+      AND c.TABLE_CATALOG = 'ONCO_PHARMA_ANALYTICS';
+
+    EXECUTE IMMEDIATE 'CREATE OR REPLACE TABLE ONCO_PHARMA_ANALYTICS.PUBLIC.DEV_TBL_COL_DQ_PROFILE AS ' || :sql_stmt;
+
+    rs := (SELECT * FROM ONCO_PHARMA_ANALYTICS.PUBLIC.DEV_TBL_COL_DQ_PROFILE);
+    RETURN TABLE(rs);
+END;
+$$;
+
+
+-- 2. Summary per table
+SELECT table_name,
+       MAX(total_rows)                          AS row_count,
+       COUNT(*)                                 AS column_count,
+       COUNT_IF(null_count > 0)                 AS columns_with_nulls,
+       COUNT_IF(column_type = 'KEY COLUMN')     AS key_columns
+FROM ONCO_PHARMA_ANALYTICS.PUBLIC.DEV_TBL_COL_DQ_PROFILE
+GROUP BY table_name
+ORDER BY columns_with_nulls DESC;
+
+-- 2. Null keys only
+SELECT
+    table_name,
+    column_name,
+    total_rows,
+    null_count,
+    null_pct
+FROM ONCO_PHARMA_ANALYTICS.PUBLIC.DEV_TBL_COL_DQ_PROFILE
+WHERE column_type = 'KEY COLUMN'
+    AND null_count > 0
+    AND (
+        UPPER(table_name) LIKE 'AGG_%'
+        OR UPPER(table_name) LIKE 'INT_%'
+        OR UPPER(table_name) LIKE 'IDL_%'
+    )
+ORDER BY table_name, null_count DESC;
+
+
+
+SELECT COUNT(DISTINCT PATIENT_ID) FROM ONCO_PHARMA_ANALYTICS.DEV.IDL_PTNT_CASES 
+WHERE SP_CASE_ID IS NOT NULL
+AND HUB_CASE_ID IS NOT NULL;
+--common to SP and HUB = 2380
+
+SELECT COUNT(DISTINCT PATIENT_ID) FROM ONCO_PHARMA_ANALYTICS.DEV.IDL_PTNT_CASES 
+WHERE SP_CASE_ID IS NULL
+AND HUB_CASE_ID IS NOT NULL;
+-- HUB only = 1849
+
+SELECT COUNT(DISTINCT PATIENT_ID) FROM ONCO_PHARMA_ANALYTICS.DEV.IDL_PTNT_CASES 
+WHERE SP_CASE_ID IS NOT NULL
+AND HUB_CASE_ID IS NULL;
+-- SP only = 240
+
+
+--Hub only
+SELECT DISTINCT PATIENT_ID
+FROM ONCO_PHARMA_ANALYTICS.DEV.STG_HUB_TRANSACTIONS
+WHERE PATIENT_ID IS NOT NULL
+EXCEPT
+SELECT DISTINCT PATIENT_ID
+FROM ONCO_PHARMA_ANALYTICS.DEV.STG_SP_TRANSACTIONS
+WHERE PATIENT_ID IS NOT NULL;
+--1825
+
+-- SP only 
+SELECT DISTINCT PATIENT_ID
+FROM ONCO_PHARMA_ANALYTICS.DEV.STG_SP_TRANSACTIONS
+WHERE PATIENT_ID IS NOT NULL
+EXCEPT
+SELECT DISTINCT PATIENT_ID
+FROM ONCO_PHARMA_ANALYTICS.DEV.STG_HUB_TRANSACTIONS
+WHERE PATIENT_ID IS NOT NULL;
+--240
+
+SELECT DISTINCT PATIENT_ID
+FROM ONCO_PHARMA_ANALYTICS.DEV.STG_HUB_TRANSACTIONS
+WHERE PATIENT_ID IS NOT NULL
+INTERSECT
+SELECT DISTINCT PATIENT_ID
+FROM ONCO_PHARMA_ANALYTICS.DEV.STG_SP_TRANSACTIONS
+WHERE PATIENT_ID IS NOT NULL;
+--2380
+
+

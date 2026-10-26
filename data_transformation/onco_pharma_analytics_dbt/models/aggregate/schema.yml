@@ -1,0 +1,54 @@
+version: 2
+models:
+- name: agg_hcp_performance
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - dim_hcp_sk
+        - dim_prod_sk
+        - dim_terr_sk
+        - bucket_type
+        - bucket_name
+        - bucket_start_date
+        - bucket_end_date
+      config:
+        severity: error
+
+- name: agg_prod_mvmt_dtl
+- name: agg_ptnt_journey
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - patient_id
+        - dim_prod_sk
+      config:
+        severity: error
+
+- name: agg_ptnt_period_performance
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - dim_prod_sk
+        - bucket_type
+        - bucket_name
+        - bucket_start_date
+        - bucket_end_date
+      config:
+        severity: error
+
+- name: agg_territory_performance
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - dim_terr_sk
+        - dim_prod_sk
+        - bucket_type
+        - bucket_name
+        - bucket_start_date
+        - bucket_end_date
+      config:
+        severity: error

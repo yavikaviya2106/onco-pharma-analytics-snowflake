@@ -1,0 +1,35 @@
+version: 2
+models:
+- name: idl_call_activity
+- name: idl_hcp_details
+- name: idl_hcp_touchpoints
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - channel_name
+        - touchpoint_id
+        - dim_hcp_sk
+      config:
+        severity: error
+
+- name: idl_pdt_distribution
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - ddd_record_id
+      config:
+        severity: error
+
+- name: idl_ptnt_cases
+- name: idl_ptnt_jrny
+- name: idl_ptnt_txn_units
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - unit_source
+        - source_transaction_id
+      config:
+        severity: error

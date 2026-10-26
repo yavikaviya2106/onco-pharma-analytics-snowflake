@@ -1,0 +1,286 @@
+version: 2
+
+models:
+- name: fct_call_activity
+  columns:
+  - name: fct_call_act_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: call_id
+    data_tests:
+    - not_null
+    - unique
+  - name: dim_hcp_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hcp_master')
+          field: dim_hcp_sk
+  - name: dim_rep_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_field_force_master')
+          field: dim_rep_sk
+
+- name: fct_call_detail
+  columns:
+  - name: fct_call_dtl_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: call_detail_id
+    data_tests:
+    - not_null
+    - unique
+  - name: dim_prod_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_product_master')
+          field: dim_prod_sk
+  - name: fct_call_act_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('fct_call_activity')
+          field: fct_call_act_sk
+
+- name: fct_email_activity
+  columns:
+  - name: fct_email_act_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: email_activity_id
+    data_tests:
+    - not_null
+    - unique
+  - name: dim_hcp_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hcp_master')
+          field: dim_hcp_sk
+  - name: dim_prod_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_product_master')
+          field: dim_prod_sk
+  - name: dim_rep_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_field_force_master')
+          field: dim_rep_sk
+  - name: fct_call_act_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('fct_call_activity')
+          field: fct_call_act_sk
+
+- name: fct_hcp_call_plan
+  columns:
+  - name: fct_call_plan_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: call_plan_id
+    data_tests:
+    - not_null
+    - unique
+  - name: dim_hcp_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hcp_master')
+          field: dim_hcp_sk
+  - name: dim_rep_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_field_force_master')
+          field: dim_rep_sk
+
+- name: fct_hcp_tgt_list
+  columns:
+  - name: fct_hcp_target_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: target_list_id
+    data_tests:
+    - not_null
+  - name: hcp_npi
+    data_tests:
+    - not_null
+  - name: effective_from
+    data_tests:
+    - not_null
+  - name: dim_hcp_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hcp_master')
+          field: dim_hcp_sk
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - target_list_id
+        - hcp_npi
+        - effective_from
+
+- name: fct_hub_transactions
+  columns:
+  - name: fct_hub_txn_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: hub_pap_transaction_id
+    data_tests:
+    - not_null
+    - unique
+  - name: dim_hcp_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hcp_master')
+          field: dim_hcp_sk
+  - name: dim_prod_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_product_master')
+          field: dim_prod_sk
+
+- name: fct_med_eve_attendees
+  columns:
+  - name: fct_eve_att_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: dim_hcp_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hcp_master')
+          field: dim_hcp_sk
+  - name: dim_med_eve_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_med_events')
+          field: dim_med_eve_sk
+
+- name: fct_med_events
+  columns:
+  - name: fct_med_eve_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: medical_event_id
+    data_tests:
+    - not_null
+    - unique
+  - name: dim_med_eve_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_med_events')
+          field: dim_med_eve_sk
+
+- name: fct_pdt_distribution
+  columns:
+  - name: fct_ddd_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: ddd_record_id
+    data_tests:
+    - not_null
+    - unique
+  - name: dim_prod_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_product_master')
+          field: dim_prod_sk
+
+- name: fct_rx_sales
+  columns:
+  - name: fct_rx_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: xponent_record_id
+    data_tests:
+    - not_null
+    - unique
+  - name: dim_hcp_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hcp_master')
+          field: dim_hcp_sk
+  - name: dim_prod_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_product_master')
+          field: dim_prod_sk
+
+- name: fct_sample_disbursed
+  columns:
+  - name: fct_sample_dis_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: sample_id
+    data_tests:
+    - not_null
+    - unique
+  - name: dim_prod_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_product_master')
+          field: dim_prod_sk
+  - name: fct_call_act_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('fct_call_activity')
+          field: fct_call_act_sk
+  - name: fct_call_dtl_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('fct_call_detail')
+          field: fct_call_dtl_sk
+          
+- name: fct_sp_transactions
+  columns:
+  - name: fct_sp_txn_sk
+    data_tests:
+    - not_null
+    - unique
+  - name: sp_transaction_id
+    data_tests:
+    - not_null
+    - unique
+  - name: dim_hcp_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_hcp_master')
+          field: dim_hcp_sk
+  - name: dim_prod_sk
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('dim_product_master')
+          field: dim_prod_sk

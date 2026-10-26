@@ -1,0 +1,91 @@
+version: 2
+
+models:
+  - name: bridge_hcp_hco_affln
+    columns:
+      - name: bridge_hcp_hco_sk
+        data_tests:
+          - not_null
+          - unique
+      - name: affiliation_id
+        data_tests:
+          - not_null
+          - unique
+      - name: onekey_hcp_id
+        data_tests:
+          - not_null
+      - name: onekey_hco_id
+        data_tests:
+          - not_null
+      - name: effective_start_date
+        data_tests:
+          - not_null
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "effective_end_date IS NULL OR effective_end_date >= effective_start_date"
+
+  - name: bridge_zip_to_terr
+    columns:
+      - name: bridge_zip_terr_sk
+        data_tests:
+          - not_null
+          - unique
+      - name: zip_code
+        data_tests:
+          - not_null
+      - name: territory_id
+        data_tests:
+          - not_null
+      - name: valid_from
+        data_tests:
+          - not_null
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - zip_code
+              - territory_id
+              - valid_from
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "valid_to IS NULL OR valid_to > valid_from"
+
+  - name: bridge_rep_terr_assignment
+    columns:
+      - name: bridge_rep_terr_sk
+        data_tests:
+          - not_null
+          - unique
+      - name: rep_id
+        data_tests:
+          - not_null
+      - name: territory_id
+        data_tests:
+          - not_null
+      - name: assignment_slot
+        data_tests:
+          - not_null
+      - name: assignment_start_date
+        data_tests:
+          - not_null
+      - name: is_active
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+                quote: false
+      - name: source_updated_at
+        data_tests:
+          - not_null
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - rep_id
+              - assignment_slot
+              - assignment_start_date
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "assignment_end_date IS NULL OR assignment_end_date >= assignment_start_date"

@@ -1,0 +1,113 @@
+version: 2
+models:
+- name: int_hcp_calls
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - dim_hcp_sk
+        - dim_prod_sk
+        - dim_terr_sk
+        - bucket_type
+        - bucket_name
+        - bucket_start_date
+        - bucket_end_date
+      config:
+        severity: error
+
+- name: int_hcp_emails
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - dim_hcp_sk
+        - dim_prod_sk
+        - dim_terr_sk
+        - bucket_type
+        - bucket_name
+        - bucket_start_date
+        - bucket_end_date
+      config:
+        severity: error
+
+- name: int_hcp_engagements
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - dim_hcp_sk
+        - dim_prod_sk
+        - dim_terr_sk
+        - bucket_type
+        - bucket_name
+        - bucket_start_date
+        - bucket_end_date
+      config:
+        severity: error
+
+- name: int_hcp_med_events
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - dim_hcp_sk
+        - dim_prod_sk
+        - dim_terr_sk
+        - bucket_type
+        - bucket_name
+        - bucket_start_date
+        - bucket_end_date
+      config:
+        severity: error
+
+- name: int_hcp_rx_metrics
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - dim_hcp_sk
+        - dim_prod_sk
+        - dim_terr_sk
+        - bucket_type
+        - bucket_name
+        - bucket_start_date
+        - bucket_end_date
+      config:
+        severity: error
+
+- name: int_hcp_units
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - dim_hcp_sk
+        - dim_prod_sk
+        - dim_terr_sk
+        - bucket_type
+        - bucket_name
+        - bucket_start_date
+        - bucket_end_date
+      config:
+        severity: error
+
+- name: int_pdt_distribution
+- name: int_ptnt_fills
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - unit_source
+        - source_transaction_id
+      config:
+        severity: error
+
+- name: int_ptnt_therapy
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - patient_id
+        - dim_prod_sk
+      config:
+        severity: error
+- name: int_ptnt_units

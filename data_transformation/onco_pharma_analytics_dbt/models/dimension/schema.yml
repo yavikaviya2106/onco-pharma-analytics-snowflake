@@ -1,0 +1,215 @@
+version: 2
+
+models:
+  - name: dim_address_master
+    columns:
+      - name: dim_addr_sk
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_brand_details
+    columns:
+      - name: dim_brand_sk
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_disease_details
+    columns:
+      - name: dim_disease_sk
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_field_force_master
+    columns:
+      - name: dim_rep_sk
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_generic_details
+    columns:
+      - name: dim_generic_sk
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_hco_master
+    columns:
+      - name: dim_hco_sk
+        data_tests:
+          - not_null
+          - unique
+      - name: dim_addr_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_address_master')
+                field: dim_addr_sk
+
+  - name: dim_hcp_master
+    columns:
+      - name: dim_hcp_sk
+        data_tests:
+          - not_null
+          - unique
+      - name: bridge_hcp_hco_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('bridge_hcp_hco_affln')
+                field: bridge_hcp_hco_sk
+      - name: dim_hco_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_hco_master')
+                field: dim_hco_sk
+
+  - name: dim_indication_details
+    columns:
+      - name: dim_indication_sk
+        data_tests:
+          - not_null
+          - unique
+      - name: dim_brand_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_brand_details')
+                field: dim_brand_sk
+      - name: dim_disease_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_disease_details')
+                field: dim_disease_sk
+      - name: dim_generic_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_generic_details')
+                field: dim_generic_sk
+
+  - name: dim_market_details
+    columns:
+      - name: dim_market_sk
+        data_tests:
+          - not_null
+          - unique
+      - name: dim_brand_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_brand_details')
+                field: dim_brand_sk
+      - name: dim_generic_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_generic_details')
+                field: dim_generic_sk
+
+  - name: dim_sku_details
+    columns:
+      - name: dim_sku_sk
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_product_master
+    columns:
+      - name: dim_prod_sk
+        data_tests:
+          - not_null
+          - unique
+      - name: dim_brand_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_brand_details')
+                field: dim_brand_sk
+      - name: dim_generic_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_generic_details')
+                field: dim_generic_sk
+      - name: dim_sku_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_sku_details')
+                field: dim_sku_sk
+
+  - name: dim_terr_algn
+    columns:
+      - name: dim_terr_sk
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_med_events
+    columns:
+      - name: dim_med_eve_sk
+        data_tests:
+          - not_null
+          - unique
+      - name: dim_disease_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_disease_details')
+                field: dim_disease_sk
+      - name: dim_indication_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_indication_details')
+                field: dim_indication_sk
+      - name: dim_prod_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_product_master')
+                field: dim_prod_sk
+
+  - name: dim_key_msg_master
+    columns:
+      - name: dim_key_msg_sk
+        data_tests:
+          - not_null
+          - unique
+      - name: dim_prod_sk
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_product_master')
+                field: dim_prod_sk
+
+  - name: dim_time_bucket
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [bucket_type, bucket_name]
+      # one bucket per type per till_date (rolling / to-date types)
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [bucket_type, till_date]
+          config:
+            where: "till_date is not null"
+    columns:
+      - name: bucket_start_date
+        data_tests:
+          - not_null
+      - name: bucket_end_date
+        data_tests:
+          - not_null
+
+  - name: dim_pdt_time_bucket
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [product_id, bucket_type, till_date]
