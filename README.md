@@ -20,7 +20,7 @@ The dataset looks synthetic (fictional company and brand names), though the repo
 CSV files → Python tasks (Airflow) → Snowflake raw tables → dbt (landing → staging → dim/fact → KPI → aggregate)
 ```
 
-![Architecture](docs/architecture.png)
+![Architecture](docs/project_overview.png)
 
 | Layer | Role |
 |---|---|
