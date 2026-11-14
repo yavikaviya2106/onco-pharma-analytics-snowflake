@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-import sys
 
 log_folder = Path(__file__).resolve().parent.parent / "logs"
 log_folder.mkdir(exist_ok=True)
@@ -22,7 +21,6 @@ def get_logger(name=__name__):
 
         file_handler = logging.FileHandler(log_folder/ "pipeline.log", encoding="utf-8")
         file_handler.setFormatter(msg_format)
-
         logger.addHandler(file_handler)
         
         # Allow Airflow to handle console logging
